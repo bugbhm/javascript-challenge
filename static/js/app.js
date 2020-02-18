@@ -1,69 +1,39 @@
+// from data.js
 var tableData = data;
-// YOUR CODE HERE!
-// var dt = tableData.datetime;
-// var city = tableData.city;
-// var state = tableData.state;
-// var country = tableData.country;
-// var shape = tableData.shape;
-// var dur = tableData.durationMinutes;
-// var comm = tableData.comments;
 
-// var contents = [dt, city, state, country, shape, dur, comm]
+// get table references
+var tbody = d3.select("tbody");
 
+function createTable(data) {
+  tbody.html("");
 
-var button = d3.select("#filter-btn");
+  // loop through data and append to table
+  data.forEach((dataRow) => {
+    var row = tbody.append("tr");
+    Object.values(dataRow).forEach((val) => {
+      var cell = row.append("td");
+        cell.text(val);
+      }
+    );
+  });
+}
 
-button.on("click", function() {
+function handleClick() {
 
-  // Select the input element and get the raw HTML node
-  var inputElement = d3.select("#datetime");
+  // datetime value from the filter
+  var date = d3.select("#datetime").property("value");
+  let filteredData = tableData;
 
-  // Get the value property of the input element
-  var inputValue = inputElement.property("value");
-
-  console.log(inputValue);
-  console.log(tableData);
-
-  var filteredData = tableData.filter(event => event.datetime === inputValue);
-
-  console.log(filteredData);
-
-  var bodyTable = d3.select("#table-body");
-
-  bodyTable.html("");
-
-  insertObject(filteredData);
-
-});
-
-
-
-function insertObject(data) {
-
-  // var tbl = document.getElementById('ufo-table');
-  // console.log(tbl);
-  var tblBody = document.getElementById("table-body");
-  console.log(tblBody);
-  // creates a <tbody> element
-  for (var i = 0; i < data.length; i++) {
-    // creates a table row
-    var row = document.createElement("tr");
-    console.log(row)
-    for (var prop in data[i]) {
-      // Create a <td> element and a text node, make the text
-      // node the contents of the <td>, and put the <td> at
-      // the end of the table row
-      var cell = document.createElement("td");
-      var cellText = document.createTextNode(data[i][prop]);
-      cell.appendChild(cellText);
-      row.appendChild(cell);
-    }
-
-    // add the row to the end of the table body
-    tblBody.appendChild(row);
+  if (date) {
+    filteredData = filteredData.filter(row => row.datetime === date);
   }
-  // // add the table body to the table
-  // tbl.appendChild(tblBody);
-};
 
-insertObject(tableData);
+
+  createTable(filteredData);
+}
+
+// Attached an event to listen for the form button
+d3.selectAll("#filter-btn").on("click", handleClick);
+
+// Build the table when the page loads
+createTable(tableData);
